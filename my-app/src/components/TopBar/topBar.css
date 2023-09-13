@@ -1,0 +1,20 @@
+.checkbox {
+    display: inline-block;
+    padding: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.2); /* Đường viền đường liền mờ */
+    border-radius: 5px; 
+    background-color: #fff; 
+    width: 98px;
+    height: 38px;
+    text-align: center;
+  }
+  
+  .checkbox label {
+    font-weight: bold; /* Chữ "Select" đậm */
+    margin-left: 5px; /* Khoảng cách giữa checkbox và chữ */
+  }
+  
+  .checkbox input[type="checkbox"]:checked {
+    margin-right: 5px; 
+    background-color: gray;
+  }
