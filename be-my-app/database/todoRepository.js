@@ -20,9 +20,6 @@ export function add(data) {
 export function updateById(id) {
     const todoList = todos.map(todo => {
         if (todo.id === parseInt(id)) {
-            if (todo.status === 'Done') {
-                return { ...todo, status: 'Pending' }
-            }
             return { ...todo, status: 'Done' }
         }
         return todo;
