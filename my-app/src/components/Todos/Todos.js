@@ -127,6 +127,7 @@ function ResourceItemExample() {
                                 content: 'Complete',
                                 onAction: handleBulkComplete,
                                 disabled: todos.filter(todo => selectedItems.includes(todo.id)).some(todo => todo.status === 'Pending') ? false : true
+
                             },
                             {
                                 content: 'Delete',
