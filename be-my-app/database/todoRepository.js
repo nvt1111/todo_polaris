@@ -20,7 +20,10 @@ export function add(data) {
 export function updateById(id) {
     const todoList = todos.map(todo => {
         if (todo.id === parseInt(id)) {
-            return { ...todo, status: 'Done' }
+            if (todo.status === 'Pending') {
+                return { ...todo, status: 'Done' }
+            }
+            return { ...todo, status: 'Pending' }
         }
         return todo;
     })
@@ -32,7 +35,10 @@ export function updateById(id) {
 export function updateByIds(idArray) {
     const todoList = todos.map(todo => {
         if (idArray?.includes(todo.id)) {
-            return { ...todo, status: 'Done' }
+            if (todo.status === 'Pending') {
+                return { ...todo, status: 'Done' }
+            }
+            return { ...todo, status: 'Pending' }
         }
         return todo;
     })

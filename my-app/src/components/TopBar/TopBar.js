@@ -1,8 +1,7 @@
 import { TopBar } from '@shopify/polaris';
-import './topBar.css'
-import ResourceItemExample from "../Todos/Todos.js"
+import ResourceItem from "../Todos/Todos.js"
 
-function TopBarExample() {
+function TopBarTodo() {
     const logo = {
         width: 124,
         topBarSource:
@@ -25,15 +24,14 @@ function TopBarExample() {
     );
 
     return (
-        // <>
         <div style={{ height: '1000px', backgroundColor: 'white', }}>
             {topBarMarkup}
-            <ResourceItemExample />
+            <ResourceItem />
         </div>
     );
 }
 
 
-export default TopBarExample;
+export default TopBarTodo;
 
 

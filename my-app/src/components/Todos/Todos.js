@@ -1,16 +1,14 @@
-import { Card, ResourceList, ResourceItem, TextStyle, Button, Stack, Page, Checkbox } from '@shopify/polaris';
+import { Card, ResourceList, ResourceItem, TextStyle, Button, Stack, Page } from '@shopify/polaris';
 import { useState, useCallback } from 'react';
 import { Badge } from '@shopify/polaris';
-import './Todos.css';
 import useFetchData from '../../hooks/useFetchApi';
 import makeRequest from '../../helpers/api/makeRequest';
-import ModalExample from '../Modal/Modal';
+import AddModalTodo from '../Modal/Modal';
 
-function ResourceItemExample() {
+function ResourceItemTodo() {
     const { todos, setTodos } = useFetchData();
     const [selectedItems, setSelectedItems] = useState([]);
     const [active, setActive] = useState(false);
-    const [checked, setChecked] = useState(false);
 
     const handleBulkComplete = async () => {
         try {
@@ -93,11 +91,6 @@ function ResourceItemExample() {
 
     const handleChange = useCallback(() => setActive(!active), [active]);
 
-    const checkboxActions = useCallback(
-        (newChecked) => setChecked(newChecked),
-        [],
-    );
-
     return (
         <>
             <Page
@@ -107,17 +100,8 @@ function ResourceItemExample() {
                     onAction: handleChange
                 }}>
                 <Card >
-                    {active && <ModalExample addTodo={addTodo} />}
+                    {active && <AddModalTodo addTodo={addTodo} />}
                     <ResourceList
-                        alternateTool={
-                            <div class='checkbox'>
-                                <Checkbox
-                                    label='Select'
-                                    checked={checked}
-                                    onChange={checkboxActions}
-                                />
-                            </div>
-                        }
                         resourceName={{ singular: 'todo', plural: 'todos' }}
                         items={todos}
                         selectedItems={selectedItems}
@@ -166,4 +150,4 @@ function ResourceItemExample() {
 }
 
 
-export default ResourceItemExample;
+export default ResourceItemTodo;
