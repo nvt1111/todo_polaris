@@ -13,6 +13,7 @@ function AddModalTodo({ addTodo }) {
     const handleEnter = (e) => {
         e.preventDefault()
         if (e.key === 'Enter') {
+            //todo: TextField có prop error , khi add todo có lỗi dùng prop đó để hiện ra nhé .
             return addTodo(value);
         }
     }

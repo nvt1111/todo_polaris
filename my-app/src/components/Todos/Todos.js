@@ -15,6 +15,7 @@ function ResourceItemTodo() {
 
             const path = '/todos/updateIds';
             const bodyData = selectedItems;
+            //todo: chỗ này cũng thế , dùng PUT nhé 
             const method = 'POST';
             const res = await makeRequest({ path, method, bodyData });
             if (res.success) {
@@ -30,6 +31,7 @@ function ResourceItemTodo() {
         try {
             const path = '/todos/delIds';
             const bodyData = selectedItems;
+            //todo: dùng đúng method nhé , chỗ này dùng delete, tìm hiểu cách truyền body cho delete nhé 
             const method = 'POST';
             const res = await makeRequest({ path, method, bodyData });
             if (res.success) {
