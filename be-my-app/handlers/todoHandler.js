@@ -1,6 +1,6 @@
 import {
     getAll, add,
-    updateById, deleteById, updateByIds, deleteByIds
+    updateTodo, deleteTodo
 } from '../database/todoRepository.js';
 
 const getTodos = (ctx) => {
@@ -20,31 +20,12 @@ const getTodos = (ctx) => {
     }
 }
 
-const deleteTodoById = (ctx) => {
-    try {
-        const id = ctx.params.id;
-        const newTodos = deleteById(id);
-
-        ctx.body = {
-            success: true,
-            message: `Todo with ID ${id} has been deleted`,
-            data: newTodos
-        };
-    } catch (e) {
-        ctx.status = 404;
-        ctx.body = {
-            success: false,
-            data: [],
-            error: e.message
-        };
-    }
-}
-
 const createTodo = async (ctx) => {
     try {
         const data = ctx.request.body
         const newTodos = add(data);
 
+        ctx.status = 201;
         ctx.body = {
             success: true,
             message: `Todo with ID ${data.id} has been created`,
@@ -63,12 +44,11 @@ const createTodo = async (ctx) => {
 
 const updateTodoById = (ctx) => {
     try {
-        const id = ctx.params.id;
-        const data = updateById(id);
+        const data = updateTodo([parseInt(ctx.params.id)]);
 
         ctx.body = {
             success: true,
-            message: `Todo with ID ${id} has been UPDATED`,
+            message: `Todo with ID ${ctx.params.id} has been UPDATED`,
             data: data
         };
     } catch (e) {
@@ -80,16 +60,14 @@ const updateTodoById = (ctx) => {
         };
     }
 }
-
 
 const updateTodoByIds = (ctx) => {
     try {
-        const idArray = ctx.request.body;
-        const data = updateByIds(idArray);
-        console.log('lfjsdafadgdfg', idArray);
+        const data = updateTodo(ctx.request.body);
+
         ctx.body = {
             success: true,
-            message: `Todo with ID ${idArray} has been UPDATE`,
+            message: `Todo with ID ${ctx.request.body} has been UPDATE`,
             data: data
         };
     } catch (e) {
@@ -102,15 +80,32 @@ const updateTodoByIds = (ctx) => {
     }
 }
 
-
-const deleteTodoByIds = async (ctx) => {
+const deleteTodoById = (ctx) => {
     try {
-        const idArray = ctx.request.body;
-        const data = deleteByIds(idArray);
+        const data = deleteTodo([ctx.params.id]);
 
         ctx.body = {
             success: true,
-            message: `Todo with ID ${idArray} has been DELETE`,
+            message: `Todo with ID ${ctx.params.id} has been deleted`,
+            data: data
+        };
+    } catch (e) {
+        ctx.status = 404;
+        ctx.body = {
+            success: false,
+            data: [],
+            error: e.message
+        };
+    }
+}
+
+const deleteTodoByIds = async (ctx) => {
+    try {
+        const data = deleteTodo(ctx.request.body.toString());
+
+        ctx.body = {
+            success: true,
+            message: `Todo with ID ${ctx.request.body.toString()} has been DELETE`,
             data: data
         };
     } catch (e) {

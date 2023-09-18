@@ -3,20 +3,18 @@ import { useState, useCallback } from 'react';
 import { Badge } from '@shopify/polaris';
 import useFetchData from '../../hooks/useFetchApi';
 import makeRequest from '../../helpers/api/makeRequest';
-import AddModalTodo from '../Modal/Modal';
+import AddModalTodo from '../modal/Modal'
 
 function ResourceItemTodo() {
-    const { todos, setTodos } = useFetchData();
+    const { todos, setTodos } = useFetchData('/todos');
     const [selectedItems, setSelectedItems] = useState([]);
     const [active, setActive] = useState(false);
 
     const handleBulkComplete = async () => {
         try {
-
-            const path = '/todos/updateIds';
+            const path = '/todos/ids';
             const bodyData = selectedItems;
-            //todo: chỗ này cũng thế , dùng PUT nhé 
-            const method = 'POST';
+            const method = 'PUT';
             const res = await makeRequest({ path, method, bodyData });
             if (res.success) {
                 setTodos([...res.data] || []);
@@ -29,10 +27,9 @@ function ResourceItemTodo() {
 
     const handleBulkDelete = async () => {
         try {
-            const path = '/todos/delIds';
+            const path = `/todos/ids`;
             const bodyData = selectedItems;
-            //todo: dùng đúng method nhé , chỗ này dùng delete, tìm hiểu cách truyền body cho delete nhé 
-            const method = 'POST';
+            const method = 'DELETE';
             const res = await makeRequest({ path, method, bodyData });
             if (res.success) {
                 setTodos([...res.data] || []);
@@ -48,7 +45,7 @@ function ResourceItemTodo() {
         try {
             const bodyData = {
                 "title": text,
-                "status": 'Pending'
+                "completed": false
             }
             const method = 'POST';
             const path = '/todos';
@@ -59,7 +56,7 @@ function ResourceItemTodo() {
                 setActive(false);
             }
         } catch (e) {
-            alert('Title is required');
+            console.log(e);
         }
     };
 
@@ -93,13 +90,16 @@ function ResourceItemTodo() {
 
     const handleChange = useCallback(() => setActive(!active), [active]);
 
+
     return (
         <>
             <Page
                 title='Todos'
                 primaryAction={{
                     content: "Create Todo",
-                    onAction: handleChange
+                    onAction: () => {
+                        handleChange();
+                    }
                 }}>
                 <Card >
                     {active && <AddModalTodo addTodo={addTodo} />}
@@ -112,7 +112,7 @@ function ResourceItemTodo() {
                             {
                                 content: 'Complete',
                                 onAction: handleBulkComplete,
-                                disabled: todos.filter(todo => selectedItems.includes(todo.id)).some(todo => todo.status === 'Pending') ? false : true
+                                disabled: todos.filter(todo => selectedItems.includes(todo.id)).some(todo => todo.completed === false) ? false : true
 
                             },
                             {
@@ -123,7 +123,7 @@ function ResourceItemTodo() {
                         ]}
                         selectable
                         renderItem={(item) => {
-                            const { id, title, status } = item;
+                            const { id, title, completed } = item;
                             return (
                                 <ResourceItem
                                     id={id}
@@ -135,7 +135,7 @@ function ResourceItemTodo() {
                                         </TextStyle>
                                         <div>
                                             <Stack alignment='center' distribution="trailing">
-                                                {status === 'Done' ? <Badge status='success'>{status}</Badge> : <Badge status='Fullfiled'>{status}</Badge>}
+                                                {completed ? <Badge status='success'>Done</Badge> : <Badge status='Fullfiled'>Pending</Badge>}
                                                 <Button onClick={() => completeTodo(id)}>Complete</Button>
                                                 <Button destructive onClick={() => removeTodo(id)}>Delete</Button>
                                             </Stack>
@@ -147,6 +147,7 @@ function ResourceItemTodo() {
                     />
                 </Card>
             </Page>
+
         </>
     );
 }

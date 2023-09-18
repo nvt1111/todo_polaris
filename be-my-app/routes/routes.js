@@ -8,10 +8,10 @@ const router = new Router({
 
 router.get('/todos', todoHandler.getTodos);
 router.post('/todos', validateTodo, todoHandler.createTodo);
-router.post('/todos/updateIds', todoHandler.updateTodoByIds);
+router.put('/todos/ids', todoHandler.updateTodoByIds);
 router.put('/todo/:id', todoHandler.updateTodoById);
 router.delete('/todo/:id', todoHandler.deleteTodoById);
-router.post('/todos/delIds', todoHandler.deleteTodoByIds);
+router.delete('/todos/ids', todoHandler.deleteTodoByIds);
 
 export default router
 

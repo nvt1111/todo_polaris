@@ -17,6 +17,6 @@ export default async function makeRequest({ path = '', method, bodyData = {} }) 
         return res;
 
     } catch (e) {
-        console.error(e);
+        console.log(e);
     }
 }

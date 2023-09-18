@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { baseUrl } from '../helpers/constants/baseUrl';
 
-const useFetchData = () => {
+const useFetchData = (path = "") => {
     const [todos, setTodos] = useState([])
     async function loadTodoes() {
-        const path = '/todos';
         const url = `${baseUrl}${path}`;
         const resp = await fetch(url);
         const todolist = await resp.json(); //  Obj
