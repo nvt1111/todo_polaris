@@ -3,41 +3,35 @@ import { useState, useCallback } from 'react';
 import { Badge } from '@shopify/polaris';
 import useFetchData from '../../hooks/useFetchApi';
 import makeRequest from '../../helpers/api/makeRequest';
-import AddModalTodo from '../modal/Modal'
+import AddModalTodo from '../Modal/Modal'
 
-function ResourceItemTodo() {
-    const { todos, setTodos } = useFetchData('/todos');
+function Todoes() {
+    const { data: todos, setData: setTodos } = useFetchData('/todos');
     const [selectedItems, setSelectedItems] = useState([]);
     const [active, setActive] = useState(false);
 
     const handleBulkComplete = async () => {
         try {
-            const path = '/todos/ids';
-            const bodyData = selectedItems;
-            const method = 'PUT';
-            const res = await makeRequest({ path, method, bodyData });
+            const res = await makeRequest('/todos', 'PUT', selectedItems);
             if (res.success) {
-                setTodos([...res.data] || []);
+                setTodos(res.data);
                 setSelectedItems([]);
             }
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     };
 
     const handleBulkDelete = async () => {
         try {
-            const path = `/todos/ids`;
-            const bodyData = selectedItems;
-            const method = 'DELETE';
-            const res = await makeRequest({ path, method, bodyData });
+            const res = await makeRequest(`/todos`, 'DELETE', selectedItems);
             if (res.success) {
-                setTodos([...res.data] || []);
+                setTodos(res.data);
                 setSelectedItems([]);
             }
 
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     };
 
@@ -46,50 +40,40 @@ function ResourceItemTodo() {
             const bodyData = {
                 "title": text,
                 "completed": false
-            }
-            const method = 'POST';
-            const path = '/todos';
-            const res = await makeRequest({ path, method, bodyData });
-            const { data } = res;
+            };
+            const res = await makeRequest('/todos', 'POST', bodyData);
             if (res.success) {
-                setTodos([...data] || []);
+                setTodos(res.data);
                 setActive(false);
             }
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     };
 
     const completeTodo = async (idTodo) => {
         try {
-            const path = `/todo/${idTodo}`;
-            const method = 'PUT'
-            const res = await makeRequest({ path, method })
-            const { data } = res;
+            const res = await makeRequest(`/todo/${idTodo}`, 'PUT');
             if (res.success) {
-                setTodos([...data] || [])
+                setTodos(res.data)
             }
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     };
 
     const removeTodo = async (idTodo) => {
         try {
-            const path = `/todo/${idTodo}`;
-            const method = 'DELETE'
-            const res = await makeRequest({ path, method });
-            const { data } = res;
+            const res = await makeRequest(`/todo/${idTodo}`, 'DELETE');
             if (res.success) {
-                setTodos([...data] || [])
+                setTodos(res.data)
             }
         } catch (e) {
-            console.log(e);
+            console.error(e);
         }
     };
 
     const handleChange = useCallback(() => setActive(!active), [active]);
-
 
     return (
         <>
@@ -97,12 +81,11 @@ function ResourceItemTodo() {
                 title='Todos'
                 primaryAction={{
                     content: "Create Todo",
-                    onAction: () => {
-                        handleChange();
-                    }
+                    onAction: () => handleChange()
+
                 }}>
                 <Card >
-                    {active && <AddModalTodo addTodo={addTodo} />}
+                    <AddModalTodo addTodo={addTodo} active={active} setActive={setActive} handleChange={handleChange} />
                     <ResourceList
                         resourceName={{ singular: 'todo', plural: 'todos' }}
                         items={todos}
@@ -133,13 +116,11 @@ function ResourceItemTodo() {
                                         <TextStyle variant="bodyMd" fontWeight="bold" as="h3">
                                             {title}
                                         </TextStyle>
-                                        <div>
-                                            <Stack alignment='center' distribution="trailing">
-                                                {completed ? <Badge status='success'>Done</Badge> : <Badge status='Fullfiled'>Pending</Badge>}
-                                                <Button onClick={() => completeTodo(id)}>Complete</Button>
-                                                <Button destructive onClick={() => removeTodo(id)}>Delete</Button>
-                                            </Stack>
-                                        </div>
+                                        <Stack alignment='center' distribution="trailing">
+                                            {completed ? <Badge status='success'>Done</Badge> : <Badge status='Fullfiled'>Pending</Badge>}
+                                            <Button onClick={() => completeTodo(id)}>Complete</Button>
+                                            <Button destructive onClick={() => removeTodo(id)}>Delete</Button>
+                                        </Stack>
                                     </Stack>
                                 </ResourceItem>
                             );
@@ -153,4 +134,4 @@ function ResourceItemTodo() {
 }
 
 
-export default ResourceItemTodo;
+export default Todoes;

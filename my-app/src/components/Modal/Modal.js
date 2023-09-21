@@ -1,63 +1,73 @@
 import { Modal } from '@shopify/polaris';
 import { useState, useCallback } from 'react';
 import { TextField, Form } from '@shopify/polaris';
-import ErrorToast from '../../hooks/errorToast';
+import SpinnerTodo from '../Spinner/Spinner'
 
-function AddModalTodo({ addTodo }) {
-    const [active, setActive] = useState(true);
+function AddModalTodo({ addTodo, active, setActive, handleChange }) {
     const [value, setValue] = useState("");
-    const handleChange = useCallback(() => setActive(!active), [active]);
+    // const handleChange = useCallback(() => setActive(!active), [active]);
     const handleChange1 = useCallback(
         (newValue) => setValue(newValue),
         [],
     );
-
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(false);
     const toggleActive = useCallback(() => setError((error) => !error), []);
 
-    const handleCreateTodo = () => {
+    const handleCreateTodo = async () => {
         if (value.trim() !== '') {
-            addTodo(value);
+            setLoading(true);
+            await addTodo(value);
+            setLoading(false);
             setActive(false);
+            setValue('');
+            setError(false);
         } else {
             toggleActive();
-            setActive(false);
         }
     };
+
     return (
-        <>
-            <>{
-                !error && < Modal
-                    open={active}
-                    onClose={handleChange}
-                    title="Create my new todo"
-                    primaryAction={{
-                        content: 'Create',
-                        onAction: handleCreateTodo
-                    }}
-                    secondaryActions={[
-                        {
-                            content: 'Cancel',
-                            onAction: handleChange,
-                        },
-                    ]}
-                >
-                    <Modal.Section >
-                        <Form onSubmit={() => addTodo(value)}>
+        < Modal
+            open={active}
+            onClose={handleChange}
+            title="Create my new todo"
+            primaryAction={{
+                content: 'Create',
+                onAction: handleCreateTodo,
+                loading: loading ? <SpinnerTodo /> : null
+
+            }}
+            secondaryActions={[
+                {
+                    content: 'Cancel',
+                    onAction: handleChange,
+                },
+            ]}
+        >
+            <Modal.Section >
+                <>
+                    {error ?
+                        <Form onSubmit={handleCreateTodo}>
+                            <TextField
+                                value={value}
+                                onChange={handleChange1}
+                                placeholder='Create todo ...'
+                                error="Todo is required"
+                            />
+                        </Form>
+                        :
+                        <Form onSubmit={handleCreateTodo}>
                             <TextField
                                 value={value}
                                 onChange={handleChange1}
                                 placeholder='Create todo ...'
                             />
                         </Form>
-                    </Modal.Section>
-                </Modal>
-            }
-            </>
-
-            <>{error && <ErrorToast active={error} toggleActive={toggleActive} />}</>
-        </>
-
+                    }
+                </>
+            </Modal.Section>
+        </Modal >
     );
 };
 

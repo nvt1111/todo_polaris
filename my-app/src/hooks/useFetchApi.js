@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
-import { baseUrl } from '../helpers/constants/baseUrl';
+import { baseUrl } from '../constants/baseUrl';
 
 const useFetchData = (path = "") => {
-    const [todos, setTodos] = useState([])
-    async function loadTodoes() {
+    const [data, setData] = useState([])
+    async function loadDatas() {
         const url = `${baseUrl}${path}`;
         const resp = await fetch(url);
-        const todolist = await resp.json(); //  Obj
-        setTodos(todolist["data"]);
+        const datalist = await resp.json(); //  Obj
+        setData(datalist["data"]);
     }
     useEffect(() => {
         console.log('Component mounted');
-        loadTodoes();
+        loadDatas();
     }, [])
 
-    return { todos, setTodos }
+    return { data, setData }
 }
 
 export default useFetchData;

@@ -1,6 +1,6 @@
-import { baseUrl } from '../constants/baseUrl';
+import { baseUrl } from '../../constants/baseUrl';
 
-export default async function makeRequest({ path = '', method, bodyData = {} }) {
+export default async function makeRequest(path = '', method = '', bodyData = {}) {
     try {
         const url = `${baseUrl}${path}`;
         const headers = {
@@ -17,6 +17,6 @@ export default async function makeRequest({ path = '', method, bodyData = {} }) 
         return res;
 
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
 }

@@ -1,5 +1,5 @@
 import { TopBar } from '@shopify/polaris';
-import ResourceItemTodo from '../todo/Todos'
+import Todoes from '../Todoes/Todoes'
 
 function TopBarTodo() {
     const logo = {
@@ -26,7 +26,7 @@ function TopBarTodo() {
     return (
         <div style={{ height: '1000px', backgroundColor: 'white', }}>
             {topBarMarkup}
-            <ResourceItemTodo />
+            <Todoes />
         </div>
     );
 }

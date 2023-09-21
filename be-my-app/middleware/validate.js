@@ -12,7 +12,7 @@ export default async function validateTodo(ctx, next) {
 
         return next();
     } catch (e) {
-        console.log(e);
+        console.error(e);
     }
 
 }
