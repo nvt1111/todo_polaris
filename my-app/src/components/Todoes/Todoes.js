@@ -9,16 +9,31 @@ function Todoes() {
     const { data: todos, setData: setTodos } = useFetchData('/todos');
     const [selectedItems, setSelectedItems] = useState([]);
     const [active, setActive] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleBulkComplete = async () => {
         try {
-            const res = await makeRequest('/todos', 'PUT', selectedItems);
+            setLoading(true)
+            const bodyData = todos.filter(todo => selectedItems.includes(todo.id))
+            const res = await makeRequest('/todos', 'PUT', bodyData);
             if (res.success) {
-                setTodos(res.data);
+                setTodos(prev =>
+                    prev.map(item => {
+                        if (selectedItems.includes(item.id)) {
+                            return {
+                                ...item,
+                                completed: !item.completed
+                            }
+                        }
+                        return item;
+                    })
+                );
                 setSelectedItems([]);
             }
         } catch (e) {
             console.error(e);
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -26,7 +41,7 @@ function Todoes() {
         try {
             const res = await makeRequest(`/todos`, 'DELETE', selectedItems);
             if (res.success) {
-                setTodos(res.data);
+                setTodos(prev => prev.filter(prev => !selectedItems.includes(prev.id)));
                 setSelectedItems([]);
             }
 
@@ -43,7 +58,7 @@ function Todoes() {
             };
             const res = await makeRequest('/todos', 'POST', bodyData);
             if (res.success) {
-                setTodos(res.data);
+                setTodos([res.data, ...todos]);
                 setActive(false);
             }
         } catch (e) {
@@ -51,25 +66,47 @@ function Todoes() {
         }
     };
 
-    const completeTodo = async (idTodo) => {
+    const completeTodo = async (idTodo, completed, title) => {
         try {
-            const res = await makeRequest(`/todo/${idTodo}`, 'PUT');
+            setLoading(true);
+            const bodyData = {
+                completed: !completed,
+                title: title
+            }
+            const res = await makeRequest(`/todo/${idTodo}`, 'PUT', bodyData);
             if (res.success) {
-                setTodos(res.data)
+                setTodos(prev =>
+                    prev.map(item => {
+                        if (item.id === idTodo) {
+                            return {
+                                ...item,
+                                ...bodyData
+                            }
+                        }
+                        return item;
+                    })
+                );
             }
         } catch (e) {
             console.error(e);
+            setLoading(false)
+        } finally {
+            setLoading(false)
         }
     };
 
     const removeTodo = async (idTodo) => {
         try {
+            setLoading(true)
             const res = await makeRequest(`/todo/${idTodo}`, 'DELETE');
             if (res.success) {
-                setTodos(res.data)
+                setTodos(prev => prev.filter(prev => prev.id !== idTodo));
             }
         } catch (e) {
             console.error(e);
+            setLoading(false)
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -82,7 +119,6 @@ function Todoes() {
                 primaryAction={{
                     content: "Create Todo",
                     onAction: () => handleChange()
-
                 }}>
                 <Card >
                     <AddModalTodo addTodo={addTodo} active={active} setActive={setActive} handleChange={handleChange} />
@@ -95,7 +131,7 @@ function Todoes() {
                             {
                                 content: 'Complete',
                                 onAction: handleBulkComplete,
-                                disabled: todos.filter(todo => selectedItems.includes(todo.id)).some(todo => todo.completed === false) ? false : true
+                                disabled: todos?.filter(todo => selectedItems.includes(todo.id)).some(todo => todo.completed === false) ? false : true
 
                             },
                             {
@@ -118,8 +154,8 @@ function Todoes() {
                                         </TextStyle>
                                         <Stack alignment='center' distribution="trailing">
                                             {completed ? <Badge status='success'>Done</Badge> : <Badge status='Fullfiled'>Pending</Badge>}
-                                            <Button onClick={() => completeTodo(id)}>Complete</Button>
-                                            <Button destructive onClick={() => removeTodo(id)}>Delete</Button>
+                                            <Button onClick={() => completeTodo(id, completed, title)} disabled={loading}  >Complete</Button>
+                                            <Button destructive onClick={() => removeTodo(id)} disabled={loading}>Delete</Button>
                                         </Stack>
                                     </Stack>
                                 </ResourceItem>
